@@ -30,3 +30,6 @@ Puis ouvrir [http://localhost:3000](http://localhost:3000).
 - Next.js 16 (App Router), React 19, TypeScript
 - Tailwind CSS 4
 - ESLint
+
+### Mot de passe de la BD : 
+eleve@test.cg et ecole@test.cg, mot de passe d’essai Motdepasse123.
