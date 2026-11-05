@@ -52,3 +52,26 @@ export async function creerDemande(
   void donnees; // inutilisés tant que la base n’est pas branchée
   return { ok: true };
 }
+
+export type StatutDemande = "en_attente" | "validee" | "refusee";
+
+export type DemandeEleve = {
+  classe: Classe;
+  envoyeeLe: Date;
+  statut: StatutDemande;
+};
+
+// Renvoie la demande du compte, ou null s’il n’en a pas déposé.
+// PROVISOIRE : tant que la base n’est pas branchée, rien n’est enregistré.
+export async function trouverDemandeDuCompte(
+  compteId: number,
+): Promise<DemandeEleve | null> {
+  void compteId; // inutilisé tant que la base n’est pas branchée
+  return null;
+}
+
+// PROVISOIRE : fausse demande pour tester les trois affichages
+// (en attente, validée, refusée). À supprimer quand la base sera branchée.
+export function demandeDeTest(statut: StatutDemande): DemandeEleve {
+  return { classe: CLASSES[0], envoyeeLe: new Date(), statut };
+}
