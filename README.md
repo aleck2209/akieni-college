@@ -1,13 +1,25 @@
 # Akieni College — Portail d'inscription
 
+## Présentation du projet
+
 Portail web d'inscription en ligne au lycée Akieni College (Livrable S22, Akieni Academy).
 
-## Prérequis
+**Stack :** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, ESLint
 
-- Node.js 20.9 ou plus récent
-- npm
+## Membres du groupe et comptes Git
+
+_Chaque membre ajoute son nom, son rôle et ses comptes Git._
+
+| Membre | Tache | Compte(s) Git |
+|---|---|---|
+| APEMBET-ALECK Virgile Yann | Deploiement | aleck2209 |
+| ELENGA Messi Soleil | Feature | elengamessisoleil-hash |
+| MBAMA-KIBANGOU Dieu Merci  | rendu & perf | mbamahonore15-sys |
+| OKANA Todd Gusman Hashall | auth | toddokana645-tech |
 
 ## Lancer le projet en local
+
+**Prérequis :** Node.js 20.9 ou plus récent, et npm.
 
 ```bash
 npm install
@@ -16,8 +28,6 @@ npm run dev
 
 Puis ouvrir [http://localhost:3000](http://localhost:3000).
 
-## Scripts
-
 | Commande | Rôle |
 |---|---|
 | `npm run dev` | Lance le serveur de développement |
@@ -25,8 +35,24 @@ Puis ouvrir [http://localhost:3000](http://localhost:3000).
 | `npm run start` | Lance la version de production construite |
 | `npm run lint` | Vérifie le code avec ESLint |
 
-## Stack
+## Comptes de test
 
-- Next.js 16 (App Router), React 19, TypeScript
-- Tailwind CSS 4
-- ESLint
+_À compléter par Auth._
+
+## Rendu
+
+_À compléter par Rendu & perf._
+
+## Audit Lighthouse
+
+_À compléter par Rendu & perf._
+
+## Déploiement
+
+### URL de production
+
+_À compléter par Déploiement._
+
+### Checklist de déploiement
+
+_À compléter par Déploiement._
