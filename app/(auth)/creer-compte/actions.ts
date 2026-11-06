@@ -40,9 +40,10 @@ export async function creerCompte(
   }
   if (motDePasse.length < 8) {
     erreurs.motDePasse = "Le mot de passe doit contenir au moins 8 caractères.";
-  } else if (motDePasse.length > 72) {
-    erreurs.motDePasse = "Le mot de passe ne doit pas dépasser 72 caractères.";
-  }
+  } else if (Buffer.byteLength(motDePasse, "utf8") > 72) {
+  erreurs.motDePasse =
+    "Le mot de passe est trop long (72 octets maximum : les lettres accentuées comptent double).";
+}
   if (!erreurs.motDePasse && confirmation !== motDePasse) {
     erreurs.confirmation = "Les deux mots de passe ne sont pas identiques.";
   }

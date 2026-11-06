@@ -6,10 +6,12 @@ const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const user = req.auth?.user;
-  const { pathname } = req.nextUrl;
+  const { pathname, search } = req.nextUrl;
 
   if (!user) {
-    return NextResponse.redirect(new URL("/connexion", req.nextUrl));
+    const url = new URL("/connexion", req.nextUrl);
+    url.searchParams.set("callbackUrl", pathname + search);
+    return NextResponse.redirect(url);
   }
   if (pathname.startsWith("/ecole") && user.role !== "ecole") {
     return NextResponse.redirect(new URL("/eleve", req.nextUrl));

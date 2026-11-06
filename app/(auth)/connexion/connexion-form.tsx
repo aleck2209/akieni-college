@@ -29,7 +29,7 @@ const TEXTES: Record<Profil, { titre: string; intro: string; placeholder: string
   },
 };
 
-export default function ConnexionForm() {
+export default function ConnexionForm({ callbackUrl = "" }: { callbackUrl?: string }) {
   const [etat, action, enCours] = useActionState(seConnecter, etatInitial);
   const [profil, setProfil] = useState<Profil>("eleve");
   const [mdpVisible, setMdpVisible] = useState(false);
@@ -69,6 +69,7 @@ export default function ConnexionForm() {
       </nav>
 
       <form action={action} noValidate>
+       <input type="hidden" name="callbackUrl" value={callbackUrl} /> 
         <fieldset className="cx-profils">
           <legend>Je me connecte en tant que</legend>
           <label className="cx-profil">
