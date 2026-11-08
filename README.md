@@ -1,22 +1,35 @@
 # Akieni College — Portail d'inscription
 
+## Présentation du projet
+
 Portail web d'inscription en ligne au lycée Akieni College (Livrable S22, Akieni Academy).
 
-## Prérequis
+**Stack :** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, ESLint
 
-- Node.js 20.9 ou plus récent
-- npm
+## Membres du groupe et comptes Git
+
+_Chaque membre ajoute son nom, son rôle et ses comptes Git._
+
+| Membre | Tache | Compte(s) Git |
+|---|---|---|
+| APEMBET-ALECK Virgile Yann | Deploiement | aleck2209 |
+| ELENGA Messi Soleil | Feature | elengamessisoleil-hash |
+| MBAMA-KIBANGOU Dieu Merci  | rendu & perf | mbamahonore15-sys |
+| OKANA Todd Gusman Hashall | auth | toddokana645-tech |
 
 ## Lancer le projet en local
 
+**Prérequis :** Node.js 20.9 ou plus récent, et npm.
+
+Avant le premier lancement, copier `.env.example` en `.env.local`, puis y remplir `DATABASE_URL` avec l'adresse de connexion à la base, reçue en message privé. Ce fichier n'est jamais commité : il contient le mot de passe de la base.
+
 ```bash
+cp .env.example .env.local
 npm install
 npm run dev
 ```
 
 Puis ouvrir [http://localhost:3000](http://localhost:3000).
-
-## Scripts
 
 | Commande | Rôle |
 |---|---|
@@ -25,97 +38,41 @@ Puis ouvrir [http://localhost:3000](http://localhost:3000).
 | `npm run start` | Lance la version de production construite |
 | `npm run lint` | Vérifie le code avec ESLint |
 
-## Stack
+## Comptes de test
 
-- Next.js 16 (App Router), React 19, TypeScript
-- Tailwind CSS 4
-- ESLint
+_À compléter par Auth._
 
-## Rendu et performances
+## Rendu
 
-### 1. Page d'accueil — SSG
+| Page | Adresse | Rendu | Pourquoi |
+|---|---|---|---|
+| Accueil | `/` | SSG | Même contenu pour tous, qui ne change qu'au déploiement : la page est générée une seule fois, au build. |
+| Liste des classes | `/classes` | ISR, 60 s | Très consultée, rarement modifiée : servie comme une page statique, elle se met à jour depuis la base sans redéploiement (`revalidate = 60`). |
+| Fiche d'une classe | `/classes/[slug]` | ISR, 60 s | Les 8 fiches sont générées au build (`generateStaticParams`), puis mises à jour comme la liste. |
+| Espace élève | `/espace-eleve` | SSR | Données propres à l'élève connecté, toujours à jour. |
+| Espace école | `/ecole` | SSR | Demandes reçues, toujours à jour pour l'école. |
 
-La page d'accueil (`/`) utilise le **Static Site Generation (SSG)**.
+L'en-tête lit l'état de connexion côté navigateur : les pages publiques restent statiques.
 
-Elle est pré-générée sous forme de HTML pendant la compilation du projet. Cette stratégie permet de fournir rapidement le contenu aux visiteurs et d'améliorer les performances de chargement.
+Sortie de `npm run build`, qui confirme ce tableau : `captures/next-build.png`.
 
-### 2. Liste et détails des classes — ISR
+## Audit Lighthouse
 
-Les pages suivantes utilisent l'**Incremental Static Regeneration (ISR)** :
+Audit en mode mobile, sur l'URL de production.
 
-- `/classes`
-- `/classes/[niveau]`
+| Catégorie | Score | Objectif |
+|---|---|---|
+| Performance | _à mesurer_ | 80 minimum |
+| Accessibility | _à mesurer_ | 80 minimum |
 
-La propriété `revalidate = 60` permet à Next.js de réactualiser les pages après un intervalle de 60 secondes, lorsqu'une nouvelle requête déclenche leur régénération.
+Capture du rapport : `captures/lighthouse-mobile.png`.
 
-Cette stratégie permet de bénéficier des avantages des pages statiques tout en permettant l'actualisation périodique du contenu.
+## Déploiement
 
-### 3. Espaces élève et administration — SSR
+### URL de production
 
-Les pages suivantes utilisent le **Server-Side Rendering (SSR)** :
+_À compléter par Déploiement._
 
-- `/espace-eleve`
-- `/administration`
+### Checklist de déploiement
 
-La configuration `dynamic = "force-dynamic"` demande à Next.js de générer ces pages côté serveur à chaque requête.
-
-Cette stratégie est adaptée aux espaces personnalisés dont le scontenu peut dépendre de l'utilisateur connecté et des données disponibles.
-
-### 4. Optimisation des images avec next/image
-
-Le projet utilise le composant `Image` de `next/image` fourni par Next.js.
-
-Cette solution permet notamment :
-- L'optimisation des images.
-- L'adaptation des images aux différentes tailles d'écran.
-- Le chargement optimisé des images.
-- Une meilleure maîtrise de l'affichage des images.
-
-Les images locales sont stockées dans le dossier `public/images/`.
-
-### 5. Audit Lighthouse — Mobile
-
-Un audit Lighthouse a été réalisé avec Google Chrome en mode Mobile.
-
-Résultats obtenus :
-
-| Indicateur | Score | Objectif |
-|---|---:|---:|
-| Performance | 84/100 | ≥ 80 |
-| Accessibilité | 96/100 | ≥ 80 |
-| Bonnes pratiques | 96/100 | — |
-| SEO | 100/100 | — |
-
-Les objectifs minimums de performance et d'accessibilité fixés pour le livrable S22 sont atteints.
-
-### 6. Preuve de l'audit
-
-La capture d'écran complète des résultats Lighthouse est disponible dans le dossier :
-
-`captures/lighthouse-mobile.png`
-
-## Rendu et performances
-
-### Stratégies de rendu
-
-- **SSG — Accueil (`/`) :** la page d'accueil est générée à la compilation.
-- **ISR — Classes (`/classes` et `/classes/[niveau]`) :** les pages sont régénérées après 60 secondes grâce à `revalidate = 60`.
-- **SSR — Espaces (`/espace-eleve` et `/administration`) :** les pages sont rendues dynamiquement côté serveur grâce à `dynamic = "force-dynamic"`.
-
-### Optimisation des images
-
-Les images sont intégrées avec `next/image` afin de bénéficier de l'optimisation proposée par Next.js.
-
-### Résultats Lighthouse (mobile)
-
-- Performance : 84
-- Accessibilité : 96
-- Bonnes pratiques : 96
-- SEO : 100
-
-Les objectifs minimaux de 80 en Performance et en Accessibilité sont atteints.
-
-### Capture Lighthouse
-
-Voir : `captures/lighthouse-mobile.png`.
-
+_À compléter par Déploiement._

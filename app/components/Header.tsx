@@ -1,38 +1,29 @@
-
 import Link from "next/link";
+import BoutonConnexion from "./BoutonConnexion";
 
 export default function Header() {
   return (
-    <header className="w-full border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-4">
-
-        {/* Logo et nom de l'établissement */}
-        <Link href="/" className="text-xl font-bold text-blue-700">
+    <header className="bg-marine text-white">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+        <Link href="/" className="flex min-h-11 items-center gap-3 text-lg font-semibold">
+          <span
+            aria-hidden="true"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border-2 border-ocre text-sm"
+          >
+            AC
+          </span>
           Akieni College
         </Link>
 
-        {/* Navigation principale */}
-        <nav className="flex flex-wrap items-center gap-6 text-sm font-medium text-slate-700">
-          <Link href="/" className="hover:text-blue-600">
+        <nav aria-label="Navigation principale" className="flex items-center gap-2 sm:gap-4">
+          <Link href="/" className="flex min-h-11 items-center px-2 hover:underline">
             Accueil
           </Link>
-
-          <Link href="/classes" className="hover:text-blue-600">
+          <Link href="/classes" className="flex min-h-11 items-center px-2 hover:underline">
             Classes
           </Link>
-
-          <Link href="/inscription" className="hover:text-blue-600">
-            Inscription
-          </Link>
-
-          <Link
-            href="/connexion"
-            className="rounded-full bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-          >
-            Connexion
-          </Link>
+          <BoutonConnexion />
         </nav>
-
       </div>
     </header>
   );

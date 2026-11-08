@@ -1,90 +1,55 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import BadgeInscriptions from "../components/BadgeInscriptions";
+import { listerClasses, NIVEAUX } from "@/lib/classes";
+
+export const metadata: Metadata = {
+  title: "Les classes — Akieni College",
+};
+
+// ISR : la page est générée au build, puis régénérée au plus toutes les 60 secondes.
 export const revalidate = 60;
-export default function ClassesPage() {
-  const classes = [
-    {
-      niveau: "6e",
-      description: "Première année du collège",
-      couleur: "bg-blue-100 text-blue-700",
-    },
-    {
-      niveau: "5e",
-      description: "Deuxième année du collège",
-      couleur: "bg-cyan-100 text-cyan-700",
-    },
-    {
-      niveau: "4e",
-      description: "Troisième année du collège",
-      couleur: "bg-emerald-100 text-emerald-700",
-    },
-    {
-      niveau: "3e",
-      description: "Année de préparation au BEPC",
-      couleur: "bg-amber-100 text-amber-700",
-    },
-    {
-      niveau: "2nde",
-      description: "Première année du lycée",
-      couleur: "bg-purple-100 text-purple-700",
-    },
-    {
-      niveau: "1ère",
-      description: "Préparation au baccalauréat",
-      couleur: "bg-pink-100 text-pink-700",
-    },
-    {
-      niveau: "Terminale",
-      description: "Année de préparation au BAC",
-      couleur: "bg-indigo-100 text-indigo-700",
-    },
-  ];
+
+export default async function PageClasses() {
+  const classes = await listerClasses();
 
   return (
-    <div className="flex flex-col gap-8">
+    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+      <h1 className="text-3xl font-semibold text-marine">Les classes</h1>
+      <p className="mt-2 text-texte-secondaire">
+        Choisissez une classe pour voir ses matières dominantes et sa condition
+        d&apos;admission.
+      </p>
 
-      {/* EN-TÊTE DE LA PAGE */}
-      <section>
-        <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
-          Espace académique
-        </p>
-
-        <h1 className="mt-2 text-3xl font-bold text-slate-900">
-          Nos classes
-        </h1>
-
-        <p className="mt-2 text-slate-500">
-          Découvrez les différents niveaux d'enseignement
-          proposés par Akieni College.
-        </p>
-      </section>
-
-      {/* LISTE DES CLASSES */}
-      <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-
-        {classes.map((classe) => (
-          <article
-            key={classe.niveau}
-            className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-          >
-            <span
-              className={`inline-flex rounded-lg px-4 py-2 text-sm font-bold ${classe.couleur}`}
-            >
-              Classe de {classe.niveau}
-            </span>
-
-            <p className="mt-5 text-sm leading-6 text-slate-600">
-              {classe.description}
-            </p>
-
-            <a
-              href={`/classes/${classe.niveau}`}
-              className="mt-6 inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800"
-            >
-              Voir les détails →
-            </a>
-          </article>
-        ))}
-
-      </section>
-    </div>
+      {NIVEAUX.map((niveau) => (
+        <section
+          key={niveau.valeur}
+          aria-labelledby={`niveau-${niveau.valeur}`}
+          className="mt-10"
+        >
+          <h2 id={`niveau-${niveau.valeur}`} className="text-xl font-semibold text-marine">
+            {niveau.libelle}
+          </h2>
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {classes
+              .filter((classe) => classe.niveau === niveau.valeur)
+              .map((classe) => (
+                <li key={classe.id}>
+                  <Link
+                    href={`/classes/${classe.slug}`}
+                    className="flex h-full flex-col gap-2 rounded-lg border border-bordure p-5 hover:border-marine"
+                  >
+                    <span className="text-lg font-semibold text-marine">{classe.libelle}</span>
+                    <span className="text-sm text-texte-secondaire">
+                      Série {classe.serie} · {classe.matieres_dominantes}
+                    </span>
+                    <BadgeInscriptions ouvertes={classe.inscriptions_ouvertes} />
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        </section>
+      ))}
+    </main>
   );
 }
