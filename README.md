@@ -6,6 +6,8 @@ Portail web d'inscription en ligne au lycée Akieni College (Livrable S22, Akien
 
 **Stack :** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, ESLint
 
+**Authentification :** Auth.js, par e-mail et mot de passe. Depuis Next.js 16, le fichier `middleware.ts` s'appelle `proxy.ts` : c'est lui qui protège `/espace-eleve`, `/demande` et `/ecole`.
+
 ## Membres du groupe et comptes Git
 
 _Chaque membre ajoute son nom, son rôle et ses comptes Git._
@@ -21,7 +23,7 @@ _Chaque membre ajoute son nom, son rôle et ses comptes Git._
 
 **Prérequis :** Node.js 20.9 ou plus récent, et npm.
 
-Avant le premier lancement, copier `.env.example` en `.env.local`, puis y remplir `DATABASE_URL` avec l'adresse de connexion à la base, reçue en message privé. Ce fichier n'est jamais commité : il contient le mot de passe de la base.
+Avant le premier lancement, copier `.env.example` en `.env.local`, puis y remplir `DATABASE_URL` avec l'adresse de connexion à la base, reçue en message privé. La commande `npx auth secret` ajoute ensuite `AUTH_SECRET`, la clé qui protège les sessions. Ce fichier n'est jamais commité : il contient le mot de passe de la base.
 
 ```bash
 cp .env.example .env.local
@@ -40,7 +42,12 @@ Puis ouvrir [http://localhost:3000](http://localhost:3000).
 
 ## Comptes de test
 
-_À compléter par Auth._
+| Compte | E-mail | Mot de passe | Accès |
+|---|---|---|---|
+| Élève | `eleve@exemple.test` | `Motdepasse123` | Espace élève et demande d'inscription |
+| École | `ecole@exemple.test` | `Motdepasse123` | Espace école |
+
+Ils sont créés par `comptes-test.sql`, à lancer après `schemas.sql` dans le SQL Editor de Supabase. Ce sont des comptes de démonstration sur des données fictives : ne pas réutiliser ce mot de passe ailleurs.
 
 ## Rendu
 
