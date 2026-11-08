@@ -12,11 +12,13 @@ export default async function Redirection({
 
   const { callbackUrl } = await searchParams;
   const retour = cheminSur(callbackUrl);
-  const role = session.user.role;
-  const monEspace = role === "ecole" ? "/ecole" : "/eleve";
-  const autreEspace = role === "ecole" ? "/eleve" : "/ecole";
+  const ecole = session.user.role === "ecole";
+  const monEspace = ecole ? "/ecole" : "/espace-eleve";
+  const espacesInterdits = ecole ? ["/espace-eleve", "/demande"] : ["/ecole"];
 
-  // On revient à la page demandée, sauf si elle appartient à l'espace de l'autre rôle.
-  if (retour && !estDans(retour, autreEspace)) redirect(retour);
+  // On revient à la page demandée, sauf si elle est réservée à l'autre rôle.
+  if (retour && !espacesInterdits.some((espace) => estDans(retour, espace))) {
+    redirect(retour);
+  }
   redirect(monEspace);
 }

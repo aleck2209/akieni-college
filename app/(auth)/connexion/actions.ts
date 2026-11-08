@@ -12,7 +12,6 @@ export async function seConnecter(
 ): Promise<EtatConnexion> {
   const email = String(formData.get("email") ?? "").trim();
   const motDePasse = String(formData.get("motDePasse") ?? "");
-  const profil = String(formData.get("profil") ?? "");
   const retour = cheminSur(String(formData.get("callbackUrl") ?? ""));
 
   if (!email || !motDePasse) {
@@ -24,14 +23,11 @@ export async function seConnecter(
     : "/redirection";
 
   try {
-    await signIn("credentials", { email, password: motDePasse, profil, redirectTo });
+    await signIn("credentials", { email, password: motDePasse, redirectTo });
   } catch (e) {
     if (e instanceof AuthError) {
-      return {
-        erreur:
-          "E-mail ou mot de passe incorrect, ou type de compte différent de celui choisi.",
-        email,
-      };
+      // Message général : on ne dit pas si c'est l'e-mail ou le mot de passe qui est faux.
+      return { erreur: "E-mail ou mot de passe incorrect", email };
     }
     throw e; // la redirection réussie passe par une exception
   }

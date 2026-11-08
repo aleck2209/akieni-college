@@ -5,7 +5,7 @@
   --doux: #475569;
   --bord: #e2e8f0;
   --fond: #f4f6fb;
-  min-height: 100vh;
+  position: relative;
   background: var(--fond);
   color: var(--texte);
   font-family: inherit;
@@ -16,48 +16,7 @@
   outline-offset: 2px;
 }
 
-/* En-tête */
-.cx-entete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  background: #fff;
-  border-bottom: 1px solid var(--bord);
-}
-.cx-marque {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--marine);
-  text-decoration: none;
-}
-.cx-marque strong { display: block; font-size: 1.25rem; }
-.cx-marque small { display: block; color: var(--doux); font-size: 0.8rem; }
-.cx-logo {
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 0.75rem;
-  background: var(--marine);
-  color: #fff;
-  font-weight: 700;
-}
-.cx-entete-droite { display: flex; align-items: center; gap: 1rem; }
-.cx-entete-droite a { color: var(--texte); font-weight: 500; text-decoration: none; }
-.cx-pastille {
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  background: #e0e7ff;
-  color: var(--marine);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-/* Mise en page */
+/* Mise en page (l'en-tête et le pied de page sont ceux de app/layout.tsx) */
 .cx-main {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
@@ -130,7 +89,7 @@
 .cx-profil:has(input:focus-visible) { outline: 3px solid #f59e0b; outline-offset: 2px; }
 
 /* Titre et champs */
-.cx-titre { margin: 0 0 0.35rem; padding-top: 1.25rem; border-top: 1px solid var(--bord); color: var(--marine); font-size: 1.75rem; }
+.cx-titre { margin: 0 0 0.35rem; padding-top: 1.25rem; border-top: 1px solid var(--bord); color: var(--marine); font-size: 1.75rem; font-weight: 700; }
 .cx-intro { margin: 0 0 1.5rem; color: var(--doux); }
 .cx-champ { margin-bottom: 1.1rem; }
 .cx-champ label { display: block; margin-bottom: 0.4rem; font-weight: 600; }
@@ -184,9 +143,9 @@
 .cx-pied-carte { margin: 1.5rem 0 0; padding-top: 1.25rem; border-top: 1px solid var(--bord); color: var(--doux); text-align: center; }
 .cx a { color: var(--bleu); font-weight: 600; }
 
-/* Message d'erreur */
+/* Message d'erreur : sous l'en-tête commun, comme dans la maquette */
 .cx-alerte {
-  position: fixed;
+  position: absolute;
   top: 1rem;
   right: 1rem;
   left: 1rem;
@@ -228,7 +187,7 @@
 .cx-temoignage blockquote { margin: 0; font-size: 1.1rem; font-style: italic; line-height: 1.6; }
 
 .cx-demarches { padding: 1.5rem; }
-.cx-demarches h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin: 0 0 1rem; color: var(--marine); font-size: 1.25rem; }
+.cx-demarches h2 { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin: 0 0 1rem; color: var(--marine); font-size: 1.25rem; font-weight: 700; }
 .cx-badge { padding: 0.25rem 0.7rem; border-radius: 999px; background: #134e4a; color: #fff; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
 .cx-etapes { display: grid; gap: 1rem; margin: 0 0 1.25rem; padding: 0; list-style: none; counter-reset: etape; }
 .cx-etapes li { position: relative; display: grid; padding-left: 3rem; counter-increment: etape; }
@@ -248,6 +207,13 @@
 .cx-etapes span { color: var(--doux); }
 .cx-aide { display: flex; justify-content: space-between; margin: 0; padding: 1rem; border-radius: 1rem; background: #eef2ff; }
 
-/* Pied de page */
-.cx-pied { max-width: 76rem; margin: 0 auto; padding: 2rem; border-top: 1px solid var(--bord); color: var(--marine); }
-.cx-pied p { margin: 0.25rem 0 0; color: var(--doux); }
+/* Message de succès : compte créé */
+.cx-succes {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid #bbf7d0;
+  border-radius: 1rem;
+  background: #dcfce7;
+  color: #14532d;
+  font-weight: 600;
+}

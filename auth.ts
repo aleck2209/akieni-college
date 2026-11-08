@@ -8,11 +8,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
-      credentials: { email: {}, password: {}, profil: {} },
+      credentials: { email: {}, password: {} },
       async authorize(credentials) {
         const email = String(credentials?.email ?? "").trim().toLowerCase();
         const motDePasse = String(credentials?.password ?? "");
-        const profil = String(credentials?.profil ?? "");
         if (!email || !motDePasse) return null;
 
         const { rows } = await pool.query(
@@ -25,10 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const ok = await bcrypt.compare(motDePasse, compte.mot_de_passe_hash);
         if (!ok) return null;
 
-        if ((profil === "eleve" || profil === "ecole") && compte.role !== profil) {
-  return null;
-}
-
+        // L'élève et l'école se connectent de la même façon : le rôle vient de la base.
         return {
           id: String(compte.id),
           name: `${compte.prenom} ${compte.nom}`,

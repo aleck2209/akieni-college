@@ -15,7 +15,7 @@ export default function Header() {
           Akieni College
         </Link>
 
-        <nav aria-label="Navigation principale" className="flex items-center gap-2 sm:gap-4">
+        <nav aria-label="Navigation principale" className="flex flex-wrap items-center gap-2 sm:gap-4">
           <Link href="/" className="flex min-h-11 items-center px-2 hover:underline">
             Accueil
           </Link>

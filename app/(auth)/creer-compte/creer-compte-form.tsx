@@ -61,12 +61,15 @@ function Champ({
   );
 }
 
-export default function CreerCompteForm() {
+export default function CreerCompteForm({ callbackUrl = "" }: { callbackUrl?: string }) {
   const [etat, action, enCours] = useActionState(creerCompte, etatInitial);
   const [mdpVisible, setMdpVisible] = useState(false);
   const id = useId();
   const erreurs = etat.erreurs ?? {};
   const valeurs = etat.valeurs;
+  const lienConnexion = callbackUrl
+    ? `/connexion?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : "/connexion";
 
   const boutonOeil = (
     <button
@@ -83,7 +86,7 @@ export default function CreerCompteForm() {
   return (
     <>
       <nav className="cx-onglets" aria-label="Connexion ou création de compte">
-        <Link className="cx-onglet" href="/connexion">
+        <Link className="cx-onglet" href={lienConnexion}>
           Connexion
         </Link>
         <span className="cx-onglet cx-onglet--actif" aria-current="page">
@@ -98,6 +101,7 @@ export default function CreerCompteForm() {
       </p>
 
       <form action={action} noValidate>
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
         {erreurs.general && (
           <p role="alert" className="cx-erreur-general">
             {erreurs.general}
@@ -161,7 +165,7 @@ export default function CreerCompteForm() {
       </form>
 
       <p className="cx-pied-carte">
-        Vous avez déjà un compte ? <Link href="/connexion">Se connecter</Link>
+        Vous avez déjà un compte ? <Link href={lienConnexion}>Se connecter</Link>
       </p>
     </>
   );

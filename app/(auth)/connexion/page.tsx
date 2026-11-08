@@ -10,14 +10,17 @@ export const metadata: Metadata = {
 export default async function PageConnexion({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; compte?: string }>;
 }) {
-  const { callbackUrl } = await searchParams;
+  const { callbackUrl, compte } = await searchParams;
 
   return (
     <main className="cx-main">
       <section className="cx-carte">
-        <ConnexionForm callbackUrl={cheminSur(callbackUrl) ?? ""} />
+        <ConnexionForm
+          callbackUrl={cheminSur(callbackUrl) ?? ""}
+          compteCree={compte === "cree"}
+        />
       </section>
 
       <aside className="cx-lateral">

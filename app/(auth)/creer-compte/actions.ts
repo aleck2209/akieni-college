@@ -1,9 +1,9 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { AuthError } from "next-auth";
-import { signIn } from "@/auth";
+import { redirect } from "next/navigation";
 import { pool } from "@/lib/db";
+import { cheminSur } from "@/lib/redirection";
 
 export type EtatCreation = {
   erreurs?: {
@@ -28,6 +28,7 @@ export async function creerCompte(
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const motDePasse = String(formData.get("motDePasse") ?? "");
   const confirmation = String(formData.get("confirmation") ?? "");
+  const retour = cheminSur(String(formData.get("callbackUrl") ?? ""));
   const valeurs = { nom, prenom, email };
 
   const erreurs: NonNullable<EtatCreation["erreurs"]> = {};
@@ -71,23 +72,8 @@ export async function creerCompte(
     };
   }
 
-  // Connexion automatique après la création.
-  try {
-    await signIn("credentials", {
-      email,
-      password: motDePasse,
-      redirectTo: "/redirection",
-    });
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return {
-        erreurs: {
-          general: "Compte créé. Connectez-vous depuis la page de connexion.",
-        },
-        valeurs,
-      };
-    }
-    throw e; // la redirection réussie passe par une exception
-  }
-  return {};
+  // Compte créé : l'élève est invité à se connecter (issue #10).
+  const parametres = new URLSearchParams({ compte: "cree" });
+  if (retour) parametres.set("callbackUrl", retour);
+  redirect(`/connexion?${parametres}`);
 }

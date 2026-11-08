@@ -29,8 +29,11 @@ const TEXTES: Record<Profil, { titre: string; intro: string; placeholder: string
   },
 };
 
-export default function ConnexionForm({ callbackUrl = "" }: { callbackUrl?: string }) {
+type Props = { callbackUrl?: string; compteCree?: boolean };
+
+export default function ConnexionForm({ callbackUrl = "", compteCree = false }: Props) {
   const [etat, action, enCours] = useActionState(seConnecter, etatInitial);
+  // Le profil choisi adapte seulement les textes : l'élève et l'école se connectent de la même façon.
   const [profil, setProfil] = useState<Profil>("eleve");
   const [mdpVisible, setMdpVisible] = useState(false);
   const [fermee, setFermee] = useState<EtatConnexion | null>(null);
@@ -38,6 +41,10 @@ export default function ConnexionForm({ callbackUrl = "" }: { callbackUrl?: stri
 
   const erreurVisible = Boolean(etat.erreur) && fermee !== etat;
   const textes = TEXTES[profil];
+  // On garde la page demandée en passant par la création de compte.
+  const lienCreation = callbackUrl
+    ? `/creer-compte?callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : "/creer-compte";
 
   return (
     <>
@@ -63,13 +70,19 @@ export default function ConnexionForm({ callbackUrl = "" }: { callbackUrl?: stri
         <span className="cx-onglet cx-onglet--actif" aria-current="page">
           Connexion
         </span>
-        <Link className="cx-onglet" href="/creer-compte">
+        <Link className="cx-onglet" href={lienCreation}>
           Créer un compte
         </Link>
       </nav>
 
+      {compteCree && !etat.erreur && (
+        <p role="status" className="cx-succes">
+          Votre compte est créé. Connectez-vous pour déposer votre demande d’inscription.
+        </p>
+      )}
+
       <form action={action} noValidate>
-       <input type="hidden" name="callbackUrl" value={callbackUrl} /> 
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
         <fieldset className="cx-profils">
           <legend>Je me connecte en tant que</legend>
           <label className="cx-profil">
@@ -154,7 +167,7 @@ export default function ConnexionForm({ callbackUrl = "" }: { callbackUrl?: stri
 
       {profil === "eleve" && (
         <p className="cx-pied-carte">
-          Pas encore d’identifiant ? <Link href="/creer-compte">Créer mon compte élève</Link>
+          Pas encore d’identifiant ? <Link href={lienCreation}>Créer mon compte élève</Link>
         </p>
       )}
     </>
