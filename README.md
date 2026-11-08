@@ -21,7 +21,10 @@ _Chaque membre ajoute son nom, son rôle et ses comptes Git._
 
 **Prérequis :** Node.js 20.9 ou plus récent, et npm.
 
+Avant le premier lancement, copier `.env.example` en `.env.local`, puis y remplir `DATABASE_URL` avec l'adresse de connexion à la base, reçue en message privé. Ce fichier n'est jamais commité : il contient le mot de passe de la base.
+
 ```bash
+cp .env.example .env.local
 npm install
 npm run dev
 ```
