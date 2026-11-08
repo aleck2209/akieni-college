@@ -68,8 +68,8 @@ export default function Accueil() {
         </h2>
         <ul className="mt-6 grid gap-4 md:grid-cols-3">
           {POINTS_FORTS.map((point) => (
-            <li key={point.titre} className="rounded-lg border border-bordure p-6">
-              <h3 className="border-b-2 border-ocre pb-2 font-semibold text-marine">
+            <li key={point.titre} className="rounded-3xl border border-bordure p-6">
+              <h3 className="font-semibold text-marine">
                 {point.titre}
               </h3>
               <p className="mt-3 text-texte-secondaire">{point.texte}</p>
@@ -85,7 +85,7 @@ export default function Accueil() {
         </h2>
         <ul className="mt-6 grid gap-4 md:grid-cols-3">
           {SERIES.map((item) => (
-            <li key={item.serie} className="rounded-lg bg-fond p-6">
+            <li key={item.serie} className="rounded-3xl bg-fond p-6">
               <p className="text-xl font-semibold text-marine">Série {item.serie}</p>
               <p className="mt-2 text-texte-secondaire">{item.dominante}</p>
             </li>

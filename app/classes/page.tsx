@@ -37,7 +37,7 @@ export default async function PageClasses() {
                 <li key={classe.id}>
                   <Link
                     href={`/classes/${classe.slug}`}
-                    className="flex h-full flex-col gap-2 rounded-lg border border-bordure p-5 hover:border-marine"
+                    className="flex h-full flex-col gap-2 rounded-3xl border border-bordure p-5 hover:border-marine"
                   >
                     <span className="text-lg font-semibold text-marine">{classe.libelle}</span>
                     <span className="text-sm text-texte-secondaire">

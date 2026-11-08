@@ -45,7 +45,7 @@ export default async function PageDemande({
           Remplissez les quatre parties ci-dessous. Les champs marqués d’une étoile sont
           obligatoires.
         </p>
-        <p className="mt-5 rounded-2xl border-l-4 border-marine bg-fond p-4 text-sm">
+        <p className="mt-5 rounded-2xl bg-fond p-4 text-sm">
           <strong className="text-marine">Aucun document à envoyer en ligne :</strong> les
           pièces sont apportées au secrétariat du lycée après la validation de votre demande.
         </p>

@@ -46,7 +46,7 @@ body {
     min-height: 44px;
     padding: 0 20px;
     border: 1px solid var(--color-marine);
-    border-radius: 8px;
+    border-radius: 999px;
     background: var(--color-marine);
     color: #ffffff;
     font-weight: 600;
@@ -79,7 +79,7 @@ body {
     min-height: 44px;
     padding: 8px 12px;
     border: 1px solid var(--color-texte-secondaire);
-    border-radius: 8px;
+    border-radius: 0.75rem;
     background: #ffffff;
     color: var(--color-texte);
   }
