@@ -1,8 +1,9 @@
-// Accès aux données de la demande d'inscription (F6).
+// Accès aux données de la demande d'inscription (F6 et F7).
 // Les classes viennent de lib/classes.ts, la connexion de lib/db.ts.
 
 import "server-only";
 import { pool } from "./db";
+import type { Classe } from "./classes";
 import { lireMoyenne, type DonneesDemande } from "./validation-demande";
 
 // Nom et prénom du compte, pour préremplir la partie « L'élève ».
@@ -77,4 +78,31 @@ export async function creerDemande(
     console.error("Dépôt de la demande :", e);
     return { ok: false, erreur: "Une erreur est survenue. Réessayez dans un instant." };
   }
+}
+
+export type StatutDemande = "en_attente" | "validee" | "refusee";
+
+export type DemandeEleve = {
+  classe: Classe;
+  envoyeeLe: Date;
+  statut: StatutDemande;
+};
+
+// Renvoie la demande du compte avec sa classe, ou null s’il n’en a pas déposé.
+export async function trouverDemandeDuCompte(
+  compteId: number,
+): Promise<DemandeEleve | null> {
+  const { rows } = await pool.query<Classe & { envoyee_le: Date; statut: StatutDemande }>(
+    `SELECT d.envoyee_le, d.statut,
+            c.id, c.slug, c.niveau, c.serie, c.libelle, c.matieres_dominantes,
+            c.condition_admission, c.inscriptions_ouvertes, c.ordre
+       FROM demande d
+       JOIN classe c ON c.id = d.classe_id
+      WHERE d.compte_id = $1`,
+    [compteId],
+  );
+  const ligne = rows[0];
+  if (!ligne) return null;
+  const { envoyee_le, statut, ...classe } = ligne;
+  return { classe, envoyeeLe: envoyee_le, statut };
 }
