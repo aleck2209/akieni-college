@@ -10,14 +10,14 @@ Portail web d'inscription en ligne au lycée Akieni College (Livrable S22, Akien
 
 ## Membres du groupe et comptes Git
 
-_Chaque membre ajoute son nom, son rôle et ses comptes Git._
-
-| Membre | Tache | Compte(s) Git |
+| Membre | Rôle | Compte(s) Git |
 |---|---|---|
-| APEMBET-ALECK Virgile Yann | Deploiement | aleck2209 |
-| ELENGA Messi Soleil | Feature | elengamessisoleil-hash |
-| MBAMA-KIBANGOU Dieu Merci  | rendu & perf | mbamahonore15-sys |
-| OKANA Todd Gusman Hashall | auth | toddokana645-tech |
+| APEMBET-ALECK Virgile Yann | Déploiement | aleck2209 |
+| ELENGA Messi Soleil | Features | elengamessisoleil-hash |
+| MBAMA-KIBANGOU Dieu Merci | Rendu & perf | mbamahonore15-sys (commits signés « arsene-akiana ») |
+| OKANA Todd Gusman Hashall | Auth | toddokana645-tech |
+
+Chaque commit de l'historique est relié à l'un de ces quatre comptes GitHub.
 
 ## Lancer le projet en local
 
@@ -61,25 +61,38 @@ Ils sont créés par `comptes-test.sql`, à lancer après `schemas.sql` dans le 
 
 L'en-tête lit l'état de connexion côté navigateur : les pages publiques restent statiques.
 
-Sortie de `npm run build`, qui confirme ce tableau : `captures/next-build.png`.
+La sortie de `npm run build` confirme ce tableau : `○` page statique (SSG), `●` page générée au build et régénérée toutes les 60 s (ISR), `ƒ` page rendue côté serveur à chaque visite (SSR).
+
+![Sortie de npm run build](captures/next-build.png)
 
 ## Audit Lighthouse
 
-Audit en mode mobile, sur l'URL de production.
+Audit Lighthouse 12.8 en mode mobile, sur l'URL de production, le 08/11/2026. Trois audits ont été lancés : le tableau donne la médiane.
 
 | Catégorie | Score | Objectif |
 |---|---|---|
-| Performance | _à mesurer_ | 80 minimum |
-| Accessibility | _à mesurer_ | 80 minimum |
+| Performance | 85 | 80 minimum |
+| Accessibility | 100 | 80 minimum |
+| Best Practices | 100 | — |
+| SEO | 100 | — |
 
-Capture du rapport : `captures/lighthouse-mobile.png`.
+![Rapport Lighthouse mobile](captures/lighthouse-mobile.png)
 
 ## Déploiement
 
 ### URL de production
 
-_À compléter par Déploiement._
+**[https://akieni-college.vercel.app](https://akieni-college.vercel.app)**
+
+Le projet Vercel `akieni-college` est relié au dépôt GitHub : chaque fusion sur `main` déclenche un nouveau déploiement de production. Les variables d'environnement `DATABASE_URL` et `AUTH_SECRET` sont configurées dans Vercel, jamais dans le dépôt.
 
 ### Checklist de déploiement
 
-_À compléter par Déploiement._
+À vérifier après chaque fusion sur `main`, et avant la démo. Dernière vérification : 08/11/2026.
+
+- [x] Le dernier déploiement de `main` a réussi : statut « success » de Vercel sur le commit de `main` dans GitHub
+- [x] Toutes les variables d'environnement sont configurées dans Vercel : les classes s'affichent (`DATABASE_URL`) et la connexion fonctionne (`AUTH_SECRET`)
+- [x] La base de production contient les 8 classes et les comptes de test : `schemas.sql` puis `comptes-test.sql`, lancés dans le SQL Editor de Supabase
+- [x] Les comptes de test se connectent en production : `eleve@exemple.test` arrive sur `/espace-eleve`, `ecole@exemple.test` sur `/ecole`
+- [x] Le parcours complet fonctionne en production : création de compte → demande → validation par l'école → statut « Validée » visible par l'élève
+- [x] Aucun secret dans le dépôt, historique Git compris : seul `.env.example` est suivi, sans valeur
