@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Charte Akieni College : 2 couleurs (bleu marine et ocre), une police (Geist). */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-marine: #1f3a5f; /* couleur principale : en-tête, boutons, titres */
+  --color-marine-fonce: #162b47; /* survol des boutons */
+  --color-ocre: #b8862b; /* accent décoratif, jamais pour du texte */
+  --color-fond: #f5f6f8;
+  --color-texte: #1e2430;
+  --color-texte-secondaire: #5b6472;
+  --color-bordure: #e2e5ea;
+
+  /* Statuts, toujours affichés avec leur libellé */
+  --color-attente: #b45309;
+  --color-attente-fond: #fef3c7;
+  --color-validee: #15803d;
+  --color-validee-fond: #dcfce7;
+  --color-refusee: #b91c1c;
+  --color-refusee-fond: #fee2e2;
+  --color-ferme: #5b6472;
+  --color-ferme-fond: #eef0f3;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: var(--color-texte);
+  font-family: var(--font-sans), sans-serif;
+}
+
+/* Focus visible au clavier sur tous les éléments */
+:focus-visible {
+  outline: 3px solid var(--color-ocre);
+  outline-offset: 2px;
+}
+
+@layer components {
+  /* Boutons : principal, secondaire, indisponible */
+  .bouton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid var(--color-marine);
+    border-radius: 8px;
+    background: var(--color-marine);
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .bouton:hover {
+    background: var(--color-marine-fonce);
+  }
+  .bouton-secondaire {
+    background: #ffffff;
+    color: var(--color-marine);
+  }
+  .bouton-secondaire:hover {
+    background: var(--color-fond);
+  }
+  .bouton:disabled {
+    border-color: var(--color-bordure);
+    background: var(--color-ferme-fond);
+    color: var(--color-ferme);
+    cursor: not-allowed;
+  }
+
+  /* Champs de formulaire et leur libellé */
+  .libelle {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .champ {
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-texte-secondaire);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--color-texte);
+  }
 }
