@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" width="480" height="320" fill="none" stroke="#1F3A5F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Sol -->
+  <line x1="30" y1="280" x2="450" y2="280"/>
+  <!-- Drapeau -->
+  <line x1="240" y1="74" x2="240" y2="28"/>
+  <path d="M240 28h36l-9 10 9 10h-36z" fill="#B8862B" stroke="none"/>
+  <!-- Fronton et emblème -->
+  <path d="M88 140 240 74 392 140z"/>
+  <circle cx="240" cy="114" r="13" stroke="#B8862B"/>
+  <!-- Bâtiment -->
+  <rect x="104" y="140" width="272" height="140"/>
+  <!-- Fenêtres -->
+  <rect x="128" y="162" width="24" height="30"/>
+  <rect x="170" y="162" width="24" height="30"/>
+  <rect x="286" y="162" width="24" height="30"/>
+  <rect x="328" y="162" width="24" height="30"/>
+  <rect x="128" y="220" width="24" height="30"/>
+  <rect x="170" y="220" width="24" height="30"/>
+  <rect x="286" y="220" width="24" height="30"/>
+  <rect x="328" y="220" width="24" height="30"/>
+  <!-- Porte -->
+  <path d="M214 280v-54a26 26 0 0 1 52 0v54"/>
+  <line x1="240" y1="200" x2="240" y2="280"/>
+  <!-- Arbres -->
+  <circle cx="58" cy="236" r="24"/>
+  <line x1="58" y1="260" x2="58" y2="280"/>
+  <circle cx="422" cy="236" r="24"/>
+  <line x1="422" y1="260" x2="422" y2="280"/>
+</svg>

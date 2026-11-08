@@ -44,11 +44,28 @@ _À compléter par Auth._
 
 ## Rendu
 
-_À compléter par Rendu & perf._
+| Page | Adresse | Rendu | Pourquoi |
+|---|---|---|---|
+| Accueil | `/` | SSG | Même contenu pour tous, qui ne change qu'au déploiement : la page est générée une seule fois, au build. |
+| Liste des classes | `/classes` | ISR, 60 s | Très consultée, rarement modifiée : servie comme une page statique, elle se met à jour depuis la base sans redéploiement (`revalidate = 60`). |
+| Fiche d'une classe | `/classes/[slug]` | ISR, 60 s | Les 8 fiches sont générées au build (`generateStaticParams`), puis mises à jour comme la liste. |
+| Espace élève | `/espace-eleve` | SSR | Données propres à l'élève connecté, toujours à jour. |
+| Espace école | `/ecole` | SSR | Demandes reçues, toujours à jour pour l'école. |
+
+L'en-tête lit l'état de connexion côté navigateur : les pages publiques restent statiques.
+
+Sortie de `npm run build`, qui confirme ce tableau : `captures/next-build.png`.
 
 ## Audit Lighthouse
 
-_À compléter par Rendu & perf._
+Audit en mode mobile, sur l'URL de production.
+
+| Catégorie | Score | Objectif |
+|---|---|---|
+| Performance | _à mesurer_ | 80 minimum |
+| Accessibility | _à mesurer_ | 80 minimum |
+
+Capture du rapport : `captures/lighthouse-mobile.png`.
 
 ## Déploiement
 
