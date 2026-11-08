@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { SuiviDemande } from "./SuiviDemande";
-import {
-  demandeDeTest,
-  trouverDemandeDuCompte,
-  type StatutDemande,
-} from "../../lib/demandes";
+import { trouverDemandeDuCompte } from "../../lib/demandes";
 
 export const metadata: Metadata = {
   title: "Mon espace — Akieni College",
@@ -17,15 +13,9 @@ async function obtenirCompteId(): Promise<number | null> {
   return 1;
 }
 
-const STATUTS_TEST: StatutDemande[] = ["en_attente", "validee", "refusee"];
-
 // Page rendue côté serveur à chaque visite (SSR) : le suivi de la demande
 // doit toujours être à jour.
-export default async function PageEspaceEleve({
-  searchParams,
-}: {
-  searchParams: Promise<{ etat?: string }>;
-}) {
+export default async function PageEspaceEleve() {
   const compteId = await obtenirCompteId();
 
   if (compteId === null) {
@@ -38,14 +28,7 @@ export default async function PageEspaceEleve({
     );
   }
 
-  // Aide au développement : /espace-eleve?etat=validee simule une demande.
-  // Ignorée en production.
-  const { etat } = await searchParams;
-  const statutTest = STATUTS_TEST.find((statut) => statut === etat);
-  const demande =
-    process.env.NODE_ENV !== "production" && statutTest
-      ? demandeDeTest(statutTest)
-      : await trouverDemandeDuCompte(compteId);
+  const demande = await trouverDemandeDuCompte(compteId);
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
