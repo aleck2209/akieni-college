@@ -1,56 +1,83 @@
-// Accès aux données de la demande d’inscription (F6).
-// PROVISOIRE : données écrites à la main, copiées de schemas.sql.
-// À remplacer par des requêtes sur la base Supabase quand elle sera prête :
-// seul ce fichier devra changer.
+// Accès aux données de la demande d'inscription (F6, F7 et F8).
+// Les classes viennent de lib/classes.ts, la connexion de lib/db.ts.
 
-import type { DonneesDemande } from "./validation-demande";
+import "server-only";
+import { pool } from "./db";
+import type { Classe } from "./classes";
+import { lireMoyenne, type DonneesDemande } from "./validation-demande";
 
-export type Classe = {
-  id: number;
-  slug: string;
-  niveau: "seconde" | "premiere" | "terminale";
-  serie: "A" | "C" | "D";
-  libelle: string;
-  inscriptionsOuvertes: boolean;
-};
-
-const CLASSES: Classe[] = [
-  { id: 1, slug: "seconde-a", niveau: "seconde", serie: "A", libelle: "Seconde A", inscriptionsOuvertes: true },
-  { id: 2, slug: "seconde-c", niveau: "seconde", serie: "C", libelle: "Seconde C", inscriptionsOuvertes: true },
-  { id: 3, slug: "premiere-a", niveau: "premiere", serie: "A", libelle: "Première A", inscriptionsOuvertes: true },
-  { id: 4, slug: "premiere-c", niveau: "premiere", serie: "C", libelle: "Première C", inscriptionsOuvertes: true },
-  { id: 5, slug: "premiere-d", niveau: "premiere", serie: "D", libelle: "Première D", inscriptionsOuvertes: true },
-  { id: 6, slug: "terminale-a", niveau: "terminale", serie: "A", libelle: "Terminale A", inscriptionsOuvertes: true },
-  { id: 7, slug: "terminale-c", niveau: "terminale", serie: "C", libelle: "Terminale C", inscriptionsOuvertes: true },
-  { id: 8, slug: "terminale-d", niveau: "terminale", serie: "D", libelle: "Terminale D", inscriptionsOuvertes: true },
-];
-
-export async function listerClasses(): Promise<Classe[]> {
-  return CLASSES;
-}
-
-export async function trouverClasse(id: number): Promise<Classe | null> {
-  return CLASSES.find((classe) => classe.id === id) ?? null;
+// Nom et prénom du compte, pour préremplir la partie « L'élève ».
+export async function lireIdentite(
+  compteId: number,
+): Promise<{ nom: string; prenom: string } | null> {
+  const { rows } = await pool.query<{ nom: string; prenom: string }>(
+    "SELECT nom, prenom FROM compte WHERE id = $1",
+    [compteId],
+  );
+  return rows[0] ?? null;
 }
 
 // La table demande impose une seule demande par compte (compte_id UNIQUE).
 export async function compteADejaUneDemande(compteId: number): Promise<boolean> {
-  void compteId; // inutilisé tant que la base n’est pas branchée
-  return false;
+  const { rowCount } = await pool.query(
+    "SELECT 1 FROM demande WHERE compte_id = $1",
+    [compteId],
+  );
+  return (rowCount ?? 0) > 0;
 }
 
 export type ResultatCreation = { ok: true } | { ok: false; erreur: string };
 
-// Enregistre la demande avec le statut « en_attente ».
+// Un champ facultatif vide est enregistré à NULL.
+const texteOuNull = (valeur: string) => (valeur.trim() === "" ? null : valeur.trim());
+
+// Enregistre la demande. La base remplit le statut « en_attente » et la date d'envoi.
 export async function creerDemande(
   compteId: number,
   classeId: number,
   donnees: DonneesDemande,
 ): Promise<ResultatCreation> {
-  void compteId;
-  void classeId;
-  void donnees; // inutilisés tant que la base n’est pas branchée
-  return { ok: true };
+  try {
+    await pool.query(
+      `INSERT INTO demande (
+         compte_id, classe_id,
+         eleve_nom, eleve_prenoms, sexe, date_naissance, lieu_naissance, nationalite,
+         adresse_quartier, adresse_ville, telephone,
+         etablissement_precedent, derniere_classe, moyenne_annuelle, moyenne_bepc,
+         responsable_nom, responsable_prenoms, responsable_lien, responsable_telephone, responsable_email
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+      [
+        compteId,
+        classeId,
+        donnees.eleve_nom.trim(),
+        donnees.eleve_prenoms.trim(),
+        donnees.sexe,
+        donnees.date_naissance,
+        donnees.lieu_naissance.trim(),
+        donnees.nationalite.trim(),
+        donnees.adresse_quartier.trim(),
+        donnees.adresse_ville.trim(),
+        texteOuNull(donnees.telephone),
+        donnees.etablissement_precedent.trim(),
+        donnees.derniere_classe.trim(),
+        lireMoyenne(donnees.moyenne_annuelle),
+        donnees.moyenne_bepc.trim() === "" ? null : lireMoyenne(donnees.moyenne_bepc),
+        donnees.responsable_nom.trim(),
+        donnees.responsable_prenoms.trim(),
+        donnees.responsable_lien,
+        donnees.responsable_telephone.trim(),
+        texteOuNull(donnees.responsable_email),
+      ],
+    );
+    return { ok: true };
+  } catch (e) {
+    // Deux envois presque simultanés : la base refuse la deuxième demande.
+    if ((e as { code?: string }).code === "23505") {
+      return { ok: false, erreur: "Vous avez déjà déposé une demande d’inscription." };
+    }
+    console.error("Dépôt de la demande :", e);
+    return { ok: false, erreur: "Une erreur est survenue. Réessayez dans un instant." };
+  }
 }
 
 export type StatutDemande = "en_attente" | "validee" | "refusee";
@@ -61,25 +88,27 @@ export type DemandeEleve = {
   statut: StatutDemande;
 };
 
-// Renvoie la demande du compte, ou null s’il n’en a pas déposé.
-// PROVISOIRE : tant que la base n’est pas branchée, rien n’est enregistré.
+// Renvoie la demande du compte avec sa classe, ou null s’il n’en a pas déposé.
 export async function trouverDemandeDuCompte(
   compteId: number,
 ): Promise<DemandeEleve | null> {
-  void compteId; // inutilisé tant que la base n’est pas branchée
-  return null;
-}
-
-// PROVISOIRE : fausse demande pour tester les trois affichages
-// (en attente, validée, refusée). À supprimer quand la base sera branchée.
-export function demandeDeTest(statut: StatutDemande): DemandeEleve {
-  return { classe: CLASSES[0], envoyeeLe: new Date(), statut };
+  const { rows } = await pool.query<Classe & { envoyee_le: Date; statut: StatutDemande }>(
+    `SELECT d.envoyee_le, d.statut,
+            c.id, c.slug, c.niveau, c.serie, c.libelle, c.matieres_dominantes,
+            c.condition_admission, c.inscriptions_ouvertes, c.ordre
+       FROM demande d
+       JOIN classe c ON c.id = d.classe_id
+      WHERE d.compte_id = $1`,
+    [compteId],
+  );
+  const ligne = rows[0];
+  if (!ligne) return null;
+  const { envoyee_le, statut, ...classe } = ligne;
+  return { classe, envoyeeLe: envoyee_le, statut };
 }
 
 // ---------------------------------------------------------------
 // F8 : traitement des demandes par l’école
-// PROVISOIRE : les demandes sont des données de test gardées en mémoire.
-// À remplacer par des requêtes sur la table demande (base Supabase).
 // ---------------------------------------------------------------
 
 export type DemandeEcole = {
@@ -92,79 +121,77 @@ export type DemandeEcole = {
   donnees: Omit<DonneesDemande, "classe_id">;
 };
 
-function demandeTest(
-  id: number,
-  classeId: number,
-  envoyeeLe: string,
-  statut: StatutDemande,
-  eleve: { nom: string; prenoms: string; sexe: "F" | "M" },
-): DemandeEcole {
-  const classe = CLASSES.find((c) => c.id === classeId) ?? CLASSES[0];
-  const entreeEnSeconde = classe.niveau === "seconde";
+type LigneDemande = Classe &
+  Omit<DonneesDemande, "classe_id"> & {
+    demande_id: number;
+    envoyee_le: Date;
+    statut: StatutDemande;
+    traitee_le: Date | null;
+  };
+
+// Les nombres et la date de naissance sont lus en texte ; un champ facultatif vide vaut "".
+const SELECT_DEMANDES = `
+  SELECT d.id AS demande_id, d.envoyee_le, d.statut, d.traitee_le,
+         d.eleve_nom, d.eleve_prenoms, d.sexe, d.date_naissance::text AS date_naissance,
+         d.lieu_naissance, d.nationalite, d.adresse_quartier, d.adresse_ville,
+         COALESCE(d.telephone, '') AS telephone,
+         d.etablissement_precedent, d.derniere_classe,
+         d.moyenne_annuelle::text AS moyenne_annuelle,
+         COALESCE(d.moyenne_bepc::text, '') AS moyenne_bepc,
+         d.responsable_nom, d.responsable_prenoms, d.responsable_lien, d.responsable_telephone,
+         COALESCE(d.responsable_email, '') AS responsable_email,
+         c.id, c.slug, c.niveau, c.serie, c.libelle, c.matieres_dominantes,
+         c.condition_admission, c.inscriptions_ouvertes, c.ordre
+    FROM demande d
+    JOIN classe c ON c.id = d.classe_id`;
+
+function versDemandeEcole(ligne: LigneDemande): DemandeEcole {
+  const {
+    demande_id, envoyee_le, statut, traitee_le,
+    id, slug, niveau, serie, libelle, matieres_dominantes, condition_admission, inscriptions_ouvertes, ordre,
+    ...donnees
+  } = ligne;
   return {
-    id,
-    classe,
-    envoyeeLe: new Date(envoyeeLe),
+    id: demande_id,
+    classe: { id, slug, niveau, serie, libelle, matieres_dominantes, condition_admission, inscriptions_ouvertes, ordre },
+    envoyeeLe: envoyee_le,
     statut,
-    traiteeLe: statut === "en_attente" ? null : new Date(envoyeeLe),
-    donnees: {
-      eleve_nom: eleve.nom,
-      eleve_prenoms: eleve.prenoms,
-      sexe: eleve.sexe,
-      date_naissance: "2010-05-12",
-      lieu_naissance: "Brazzaville",
-      nationalite: "Congolaise",
-      adresse_quartier: "Poto-Poto",
-      adresse_ville: "Brazzaville",
-      telephone: "",
-      etablissement_precedent: "CEG Marien Ngouabi",
-      derniere_classe: entreeEnSeconde ? "3e" : "Classe inférieure",
-      moyenne_annuelle: "13,50",
-      moyenne_bepc: entreeEnSeconde ? "12,75" : "",
-      responsable_nom: eleve.nom,
-      responsable_prenoms: "Jean",
-      responsable_lien: "pere",
-      responsable_telephone: "06 000 00 00",
-      responsable_email: "",
-    },
+    traiteeLe: traitee_le,
+    donnees,
   };
 }
 
-const demandesDeTest: DemandeEcole[] = [
-  demandeTest(1, 1, "2026-11-02T09:15:00", "en_attente", { nom: "MBEMBA", prenoms: "Grâce Estelle", sexe: "F" }),
-  demandeTest(2, 2, "2026-11-03T14:40:00", "en_attente", { nom: "OKOUMOU", prenoms: "Prince Gaël", sexe: "M" }),
-  demandeTest(3, 4, "2026-11-03T16:05:00", "validee", { nom: "NZABA", prenoms: "Merveille", sexe: "F" }),
-  demandeTest(4, 8, "2026-11-04T08:30:00", "refusee", { nom: "ITOUA", prenoms: "Kévin Brice", sexe: "M" }),
-  demandeTest(5, 3, "2026-11-04T11:20:00", "en_attente", { nom: "NDINGA", prenoms: "Divine", sexe: "F" }),
-];
-
 // Toutes les demandes, les plus récentes en premier
 export async function listerDemandes(): Promise<DemandeEcole[]> {
-  return [...demandesDeTest].sort(
-    (a, b) => b.envoyeeLe.getTime() - a.envoyeeLe.getTime(),
+  const { rows } = await pool.query<LigneDemande>(
+    `${SELECT_DEMANDES} ORDER BY d.envoyee_le DESC`,
   );
+  return rows.map(versDemandeEcole);
 }
 
 // Une demande avec toutes les informations saisies par l’élève
 export async function trouverDemande(id: number): Promise<DemandeEcole | null> {
-  return demandesDeTest.find((demande) => demande.id === id) ?? null;
+  const { rows } = await pool.query<LigneDemande>(`${SELECT_DEMANDES} WHERE d.id = $1`, [id]);
+  return rows[0] ? versDemandeEcole(rows[0]) : null;
 }
 
 export type ResultatTraitement = { ok: true } | { ok: false; erreur: string };
 
-// Valide ou refuse une demande en attente. Une demande déjà traitée ne change plus.
+// Valide ou refuse une demande en attente. Une demande déjà traitée ne change plus :
+// la condition « statut = 'en_attente' » est vérifiée par la base, dans la même requête.
 export async function traiterDemande(
   id: number,
   decision: "validee" | "refusee",
 ): Promise<ResultatTraitement> {
-  const demande = demandesDeTest.find((d) => d.id === id);
-  if (!demande) {
-    return { ok: false, erreur: "Cette demande n’existe pas." };
-  }
-  if (demande.statut !== "en_attente") {
-    return { ok: false, erreur: "Cette demande a déjà été traitée." };
-  }
-  demande.statut = decision;
-  demande.traiteeLe = new Date();
-  return { ok: true };
+  const { rowCount } = await pool.query(
+    `UPDATE demande SET statut = $2, traitee_le = now()
+      WHERE id = $1 AND statut = 'en_attente'`,
+    [id, decision],
+  );
+  if (rowCount === 1) return { ok: true };
+
+  const existe = await pool.query("SELECT 1 FROM demande WHERE id = $1", [id]);
+  return existe.rowCount
+    ? { ok: false, erreur: "Cette demande a déjà été traitée." }
+    : { ok: false, erreur: "Cette demande n’existe pas." };
 }

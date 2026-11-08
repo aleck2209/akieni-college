@@ -1,56 +1,28 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { SuiviDemande } from "./SuiviDemande";
-import {
-  demandeDeTest,
-  trouverDemandeDuCompte,
-  type StatutDemande,
-} from "../../lib/demandes";
+import { trouverDemandeDuCompte } from "@/lib/demandes";
+import { obtenirCompteId, obtenirRole } from "@/lib/session";
 
 export const metadata: Metadata = {
   title: "Mon espace — Akieni College",
 };
 
-// PROVISOIRE : l’identifiant du compte devra venir de la session Auth.js.
-// À remplacer quand la pull request « auth » sera fusionnée : renvoyer null
-// si personne n’est connecté.
-async function obtenirCompteId(): Promise<number | null> {
-  return 1;
-}
-
-const STATUTS_TEST: StatutDemande[] = ["en_attente", "validee", "refusee"];
-
-// Page rendue côté serveur à chaque visite (SSR) : le suivi de la demande
-// doit toujours être à jour.
-export default async function PageEspaceEleve({
-  searchParams,
-}: {
-  searchParams: Promise<{ etat?: string }>;
-}) {
+// SSR : la page lit la session et la base à chaque visite,
+// pour que le suivi de la demande soit toujours à jour.
+export default async function PageEspaceEleve() {
+  // Revérification côté serveur (issue #12) : proxy.ts ne suffit pas.
+  if ((await obtenirRole()) === "ecole") redirect("/ecole");
   const compteId = await obtenirCompteId();
+  if (compteId === null) redirect("/connexion?callbackUrl=%2Fespace-eleve");
 
-  if (compteId === null) {
-    return (
-      <main className="mx-auto max-w-2xl px-4 py-10">
-        <p className="text-slate-700">
-          Vous devez être connecté pour voir votre espace.
-        </p>
-      </main>
-    );
-  }
-
-  // Aide au développement : /espace-eleve?etat=validee simule une demande.
-  // Ignorée en production.
-  const { etat } = await searchParams;
-  const statutTest = STATUTS_TEST.find((statut) => statut === etat);
-  const demande =
-    process.env.NODE_ENV !== "production" && statutTest
-      ? demandeDeTest(statutTest)
-      : await trouverDemandeDuCompte(compteId);
+  // L'élève ne voit que sa propre demande : le filtre vient de la session.
+  const demande = await trouverDemandeDuCompte(compteId);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10">
-      <h1 className="text-2xl font-bold text-slate-900">Mon espace</h1>
-      <p className="mt-2 mb-8 text-slate-600">
+    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <h1 className="text-3xl font-semibold text-marine">Mon espace</h1>
+      <p className="mt-2 text-texte-secondaire">
         Suivez l’état de votre demande d’inscription à Akieni College.
       </p>
       <SuiviDemande demande={demande} />

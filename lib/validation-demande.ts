@@ -98,7 +98,7 @@ export function validerDemande(
   }
 
   if (!erreurs.sexe && !["F", "M"].includes(donnees.sexe)) {
-    erreurs.sexe = "Choisissez F ou M.";
+    erreurs.sexe = "Choisissez Féminin ou Masculin.";
   }
 
   if (!erreurs.responsable_lien && !["pere", "mere", "tuteur"].includes(donnees.responsable_lien)) {

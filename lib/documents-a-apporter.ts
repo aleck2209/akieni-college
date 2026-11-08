@@ -1,7 +1,7 @@
 // Documents à apporter au secrétariat après la validation de la demande (F7).
 // Source : document « Fonctionnalités », §6.
 
-import type { Classe } from "./demandes";
+import type { Classe } from "./classes";
 
 export function documentsAApporter(niveau: Classe["niveau"]): string[] {
   const documents = ["Extrait d’acte de naissance"];
