@@ -1,6 +1,6 @@
 import { Mail, MapPin, Phone } from "lucide-react";
-import { CONTACTS_LYCEE } from "@/lib/contacts-lycee";
 
+// Coordonnées fictives du lycée (prompt de la maquette).
 export default function Footer() {
   return (
     <footer className="border-t border-bordure bg-fond">
@@ -10,18 +10,18 @@ export default function Footer() {
         <address className="flex flex-col not-italic sm:flex-row sm:flex-wrap sm:gap-x-8">
           <span className="flex min-h-11 items-center gap-2">
             <MapPin size={16} aria-hidden="true" />
-            {CONTACTS_LYCEE.adresse}
+            Avenue des Écoles, Bacongo, Brazzaville
           </span>
-          <a href={CONTACTS_LYCEE.lienTelephone} className="flex min-h-11 items-center gap-2 hover:underline">
+          <a href="tel:+242060000000" className="flex min-h-11 items-center gap-2 hover:underline">
             <Phone size={16} aria-hidden="true" />
-            {CONTACTS_LYCEE.telephone}
+            +242 06 000 00 00
           </a>
           <a
-            href={`mailto:${CONTACTS_LYCEE.email}`}
+            href="mailto:contact@akieni-college.test"
             className="flex min-h-11 items-center gap-2 hover:underline"
           >
             <Mail size={16} aria-hidden="true" />
-            {CONTACTS_LYCEE.email}
+            contact@akieni-college.test
           </a>
         </address>
       </div>
