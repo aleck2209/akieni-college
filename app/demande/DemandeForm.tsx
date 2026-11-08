@@ -122,19 +122,11 @@ function Partie({
   return (
     <section className="mt-6 rounded-3xl border border-bordure bg-white p-6 sm:p-8">
       <fieldset>
-        <legend className="flex items-center gap-3">
-          <span
-            aria-hidden="true"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fond font-semibold text-marine"
-          >
-            {numero}
+        <legend>
+          <span className="block text-xl font-semibold text-marine">
+            {numero}. {titre}
           </span>
-          <span>
-            <span className="block text-xl font-semibold text-marine">
-              {numero}. {titre}
-            </span>
-            <span className="block text-sm text-texte-secondaire">{sousTitre}</span>
-          </span>
+          <span className="block text-sm text-texte-secondaire">{sousTitre}</span>
         </legend>
         <div className="mt-6 grid gap-5 sm:grid-cols-2">{children}</div>
       </fieldset>

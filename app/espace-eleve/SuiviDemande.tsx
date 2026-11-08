@@ -90,22 +90,13 @@ export function SuiviDemande({ demande }: { demande: DemandeEleve | null }) {
             <h2 className="text-xl font-semibold text-marine">
               Documents à apporter au secrétariat
             </h2>
-            <ol className="mt-4 grid gap-3">
-              {documentsAApporter(classe.niveau).map((document, index) => (
-                <li
-                  key={document}
-                  className="flex items-center gap-3 rounded-2xl border border-bordure p-4"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fond font-semibold text-marine"
-                  >
-                    {index + 1}
-                  </span>
+            <ul className="mt-4 grid gap-3">
+              {documentsAApporter(classe.niveau).map((document) => (
+                <li key={document} className="rounded-2xl border border-bordure p-4">
                   {document}
                 </li>
               ))}
-            </ol>
+            </ul>
             <p className="mt-5 rounded-2xl bg-fond p-4 text-sm">
               Les frais d’inscription se règlent sur place, au secrétariat.
             </p>

@@ -30,7 +30,7 @@ export default async function PageClasse({ params }: PageProps<"/classes/[slug]"
         <BadgeInscriptions ouvertes={classe.inscriptions_ouvertes} />
       </div>
 
-      <dl className="mt-8 grid gap-6 rounded-lg border border-bordure p-6 sm:grid-cols-2">
+      <dl className="mt-8 grid gap-6 rounded-3xl border border-bordure p-6 sm:grid-cols-2">
         <div>
           <dt className="text-sm text-texte-secondaire">Niveau</dt>
           <dd className="mt-1 font-semibold">{niveau}</dd>
